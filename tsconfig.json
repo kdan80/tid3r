@@ -3,18 +3,24 @@
 
     "target": "es2017",                                  
     "lib": ["dom", "dom.iterable", "esnext"],                                    
-    "module": "esnext",                                
-    "rootDir": "src",                                    
+    
+    // Module imports (requires type: module in package.json)
+    "module": "nodenext",
+    "moduleResolution": "nodenext",     
+    
+    // Useful for debugging
+    "sourceMap": true,
+    
+    "rootDir": "src",  
+    "outDir": "./dist",                                  
     //"resolveJsonModule": true,                        
-    "outDir": "./dist",                                   
     "removeComments": true,   
-    "moduleResolution": "node",                        
-    //"noEmit": true,                                   
     "esModuleInterop": true,                             
     "forceConsistentCasingInFileNames": true,            
     "strict": true,                                      
     "noImplicitAny": true,                            
     "skipLibCheck": true,
     "types": ["node"],                                 
-  }
+  },
+  "include": ["src/**/*"]
 }
