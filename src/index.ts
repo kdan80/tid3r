@@ -23,21 +23,12 @@ const get_n_bytes_from_file = async(path: string, { start, end }: bytes): Promis
 
 // This function determines if a file is truly an mp3 with ID3v2 metadata
 // It looks for the magic number/file signature <49 44 33> at the start of the file
-const file_is_ID3v2_mp3 = async(path: string): Promise<boolean> => {
-    
-    try {
-        const magicNumber = await get_n_bytes_from_file(path, {start: 0, end: 2})
-        const ID3v2 = Buffer.from('494433', 'hex')
-        const bufferComparison = Buffer.compare(magicNumber, ID3v2)
-        
-        // 0 means eqauality with Buffer.compare()
-        if (bufferComparison === 0) return true;
-        return false
-    } catch (err) {
-        return false
-    }
+const file_is_ID3v2_mp3 = (buffer: Buffer ): boolean => {
+    const ID3v2 = Buffer.from('494433', 'hex')
+    const buffer_comparison = Buffer.compare(buffer, ID3v2)
+
+    // If 2 buffers are equal Buffer.compare() will return 0
+    // Therefore we need to !invert the result in order to return true
+    return !buffer_comparison
 }
 
-const isMp3 = await file_is_ID3v2_mp3('/home/kd/Projects/Anoid/media/intro.mp3');
-
-console.log('intro.mp3 is a valid mp3 =', isMp3)
