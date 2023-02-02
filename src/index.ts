@@ -1,51 +1,37 @@
 import fs from 'fs'
 
-const file = '/home/kd/Projects/Anoid/media/intro.mp3'
+const id3v2_file = '/home/kd/Projects/Anoid/media/id3v2.mp3'
+const id3v1_file = '/home/kd/Projects/Anoid/media/id3v1.mp3'
+const test_file = '/home/kd/Projects/Anoid/media/test.txt'
 
-// Magic numbers/file signatures for various file formats
-const magic_number_ID3v2 = Buffer.from('494433', 'hex')
+// Magic numbers/file signatures for various file formats stored as hex strings
+const magic_number_ID3v2 = '494433'
+const magic_number_ID3v1 = 'fffb'
+const magic_number_flac = '664c6143'
 
-type bytes = {
-    start: number
-    end: number
-}
-
-
-// This function returns a specified number of bytes (buffer) from a file
-// It takes in a file and a start & stop value as parameters
-// e.g passing in (song.mp3, {0, 2}) will return the first 3 bytes of song.mp3 as a buffer object
-// This function is called by other functions to look for magic numbers/file signatures
-// N.B. This function uses a readStream rather than reading the entire file into ram
-const get_buffer_from_file = async(path: string, { start, end }: bytes): Promise<Buffer> => {
+const get_first_4_bytes_as_hexstring_from_file = async(path: string): Promise<string> => {
     
     const chunks = []
-    for await (const chunk of fs.createReadStream(path, { start, end })) {
+    for await (const chunk of fs.createReadStream(path, { start: 0, end: 3})) {
         chunks.push(chunk)
     }
     
-    return Buffer.concat(chunks)
+    return Buffer.concat(chunks).toString('hex')
 }
 
-// This is a currying function
-// It takes in a magic number/buffer as a parameter and returns a function that can check
-// if a provided buffer is equal to the magic number
-// It only checks for equality and discards other results
-// It will be used to create child functions that check if a file is ID3v2, ID3v1, flac etc
-const compare_buffer_to_magic_number = (n_bytes_from_file: Buffer): (magic_number: Buffer) => boolean => {
+const compare_hexstring_to_magic_number = (hexstring_from_file: string): (magic_number: string) => boolean => {
     
-    // If 2 buffers are equal Buffer.compare() will return 0
-    // Therefore we need to !invert the result in order to return true
-    return (magic_number: Buffer) => {
-        const buffer_comparison = Buffer.compare(n_bytes_from_file, magic_number)
-        return !buffer_comparison
+    return (magic_number: string) => {
+        return hexstring_from_file.toLowerCase() === magic_number
     }
 }
 
 // The following functions are used to validate whether a buffer is a magic number
-const compare_buffer_to_ID3v2 = compare_buffer_to_magic_number(magic_number_ID3v2)
+const compare_buffer_to_ID3v2 = compare_hexstring_to_magic_number(magic_number_ID3v2)
+const compare_buffer_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
+const compare_buffer_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
 
+const x = await get_first_4_bytes_as_hexstring_from_file(id3v2_file)
+const z = compare_buffer_to_ID3v2(x.slice(0,6))
 
-const mp3_buffer = await get_buffer_from_file(file, {start: 0, end: 2})
-const is_mp3 = compare_buffer_to_ID3v2(mp3_buffer)
-console.log(is_mp3)
 
