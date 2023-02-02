@@ -17,18 +17,27 @@ const magic_number_ID3v2 = '494433'
 const magic_number_ID3v1 = 'fffb'
 const magic_number_flac = '664c6143'
 
-const get_first_4_bytes_as_hexstring_from_file = async(path: string): Promise<string> => {
-    
-    const chunks = []
-    for await (const chunk of fs.createReadStream(path, { start: 0, end: 3})) {
-        chunks.push(chunk)
-    }
-    
-    return Buffer.concat(chunks).toString('hex')
+type Range = {
+    start: number,
+    end: number
 }
 
+const get_n_bytes_from_read_stream = (range: Range) => {
+
+    return async(path: string): Promise<Buffer> => {
+        const chunks = []
+        for await (const chunk of fs.createReadStream(path, range)) {
+        chunks.push(chunk)
+    }
+        return Buffer.concat(chunks)
+    }
+}
+
+const get_ID3v1_magic_number = get_n_bytes_from_read_stream({start: 0, end: 1})
+const get_ID3v2_magic_number = get_n_bytes_from_read_stream({start: 0, end: 2})
+const get_flac_magic_number = get_n_bytes_from_read_stream({start: 0, end: 3})
+
 const compare_hexstring_to_magic_number = (hexstring_from_file: string): (magic_number: string) => boolean => {
-    
     return (magic_number: string) => {
         return hexstring_from_file.toLowerCase() === magic_number
     }
@@ -39,9 +48,11 @@ const check_audio_format_is_supported = (audio_file_path: string): boolean => {
     return supported_audio_formats.includes(file_extension)
 }
 
-
 // The following functions are used to validate whether a hexstring is a magic number
 const compare_hexstring_to_ID3v2 = compare_hexstring_to_magic_number(magic_number_ID3v2)
 const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
 const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
+
+
+
 
