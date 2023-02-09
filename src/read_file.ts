@@ -49,36 +49,44 @@ export const compare_hexstring_to_ID3v2 = compare_hexstring_to_magic_number(magi
 export const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
 export const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
 
+export const read_tag_header = (buffer: Buffer, offset: number)  => {
+    const title = buffer.slice(offset,offset + 4).toString()
+    const length = buffer.slice(offset + 4, offset + 8).readUint32BE()
+    return {
+        title: title,
+        length: length
+    }
+}
+
 export const readIso8859 = (buffer: Buffer, offset: number, length = Infinity) => {
-    const bytes = [];
-    let i = 0;
+    const bytes = []
+    let i = 0
     while (buffer.readUInt8(offset + i) !== 0 && i < length) {
-        bytes.push(buffer.readUInt8(offset + i));
-        i += 1;
+        bytes.push(buffer.readUInt8(offset + i))
+        i += 1
     }
     return [new TextDecoder("iso-8859-1").decode(Uint8Array.from(bytes)), i];
 }
 
 const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
-    const bytes = [];
-    let i = 0;
+    const bytes = []
+    let i = 0
     while (buffer.readUInt16BE(offset + i) !== 0 && i < length) {
-        bytes.push(buffer.readUInt8(offset + i));
-        bytes.push(buffer.readUInt8(offset + i + 1));
-        i += 2;
+        bytes.push(buffer.readUInt8(offset + i))
+        bytes.push(buffer.readUInt8(offset + i + 1))
+        i += 2
     }
-    let encoding;
+    let encoding
     if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
-        encoding = "utf-16le";
+        encoding = "utf-16le"
     } else if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
-        encoding = "utf-16be";
+        encoding = "utf-16be"
     }
-    return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i];
+    return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i]
 }
 
-
 export const readTagField = (buffer: Buffer, offset: number, length: number) => {
-    const encodingType = buffer.readUInt8(offset);
+    const encodingType = buffer.readUInt8(offset)
     return encodingType === 1
         ? readUtf16(buffer, offset + 1, length - 1)[0]
         : readIso8859(buffer, offset + 1, length - 1)[0]

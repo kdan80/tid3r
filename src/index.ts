@@ -6,7 +6,8 @@ import { check_audio_format_is_supported,
     convert_buffer_to_hex_string,
     compare_hexstring_to_ID3v2,
     extract_first_tag_header,
-    readTagField
+    readTagField,
+    read_tag_header
 } from './read_file.js'
 
 const id3v2_file = '/home/kd/Projects/tid3r/media/id3v2.mp3'
@@ -49,12 +50,13 @@ try {
     const first_tag_title = first_tag_header.slice(0,4).toString()
     const first_tag_length = first_tag_header.slice(4,8).readUint32BE()
     const first_tag_flags = first_tag_header.slice(8,9)
-    console.log(first_tag_length)
+    console.log(first_tag_title)
 
     const x = readTagField(audio_file_buffer, 20, first_tag_length)
-    console.log(x)
-    //const first_tag_data = audio_file_buffer.slice(21, 20 + first_tag_length).toString()
+    console.log('Tag Field is: ', x)
     
+    const tag_header = read_tag_header(audio_file_buffer, 10)
+    console.log(tag_header)
 
 } catch (err: any) {
     console.log(err.message)
