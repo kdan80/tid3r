@@ -23,7 +23,7 @@ export const calculate_ID3_data_length_in_bytes = (ID3_length_bytes: Buffer) => 
             |   (ID3_length_bytes.readUInt8(3))
 }
 
-const extract_bytes_from_buffer = (offset: number, range: number) => {
+export const extract_bytes_from_buffer = (offset: number, range: number) => {
 
     return (audio_file_buffer: Buffer): Buffer => {
         return audio_file_buffer.slice(offset, offset + range)
@@ -32,6 +32,7 @@ const extract_bytes_from_buffer = (offset: number, range: number) => {
 
 export const extract_ID3_magic_number = extract_bytes_from_buffer(0,3)
 export const extract_ID3_length_bytes = extract_bytes_from_buffer(6,4)
+export const extract_first_tag_header = extract_bytes_from_buffer(10,10)
 
 export const convert_buffer_to_hex_string = (buffer: Buffer): string => {
     return buffer.toString('hex')
@@ -48,6 +49,40 @@ export const compare_hexstring_to_ID3v2 = compare_hexstring_to_magic_number(magi
 export const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
 export const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
 
+export const readIso8859 = (buffer: Buffer, offset: number, length = Infinity) => {
+    const bytes = [];
+    let i = 0;
+    while (buffer.readUInt8(offset + i) !== 0 && i < length) {
+        bytes.push(buffer.readUInt8(offset + i));
+        i += 1;
+    }
+    return [new TextDecoder("iso-8859-1").decode(Uint8Array.from(bytes)), i];
+}
+
+const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
+    const bytes = [];
+    let i = 0;
+    while (buffer.readUInt16BE(offset + i) !== 0 && i < length) {
+        bytes.push(buffer.readUInt8(offset + i));
+        bytes.push(buffer.readUInt8(offset + i + 1));
+        i += 2;
+    }
+    let encoding;
+    if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+        encoding = "utf-16le";
+    } else if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+        encoding = "utf-16be";
+    }
+    return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i];
+}
+
+
+export const readTagField = (buffer: Buffer, offset: number, length: number) => {
+    const encodingType = buffer.readUInt8(offset);
+    return encodingType === 1
+        ? readUtf16(buffer, offset + 1, length - 1)[0]
+        : readIso8859(buffer, offset + 1, length - 1)[0]
+}
 
 
 
