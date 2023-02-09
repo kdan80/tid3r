@@ -50,10 +50,10 @@ export const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magi
 export const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
 
 export const read_tag_header = (buffer: Buffer, offset: number)  => {
-    const title = buffer.slice(offset,offset + 4).toString()
+    const field = buffer.slice(offset,offset + 4).toString()
     const length = buffer.slice(offset + 4, offset + 8).readUint32BE()
     return {
-        title: title,
+        field: field,
         length: length
     }
 }
