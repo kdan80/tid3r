@@ -32,7 +32,6 @@ export const extract_bytes_from_buffer = (offset: number, range: number) => {
 
 export const extract_ID3_magic_number = extract_bytes_from_buffer(0,3)
 export const extract_ID3_length_bytes = extract_bytes_from_buffer(6,4)
-export const extract_first_tag_header = extract_bytes_from_buffer(10,10)
 
 export const convert_buffer_to_hex_string = (buffer: Buffer): string => {
     return buffer.toString('hex')
@@ -49,9 +48,40 @@ export const compare_hexstring_to_ID3v2 = compare_hexstring_to_magic_number(magi
 export const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
 export const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
 
-export const read_tag_header = (buffer: Buffer, offset: number)  => {
-    const field = buffer.slice(offset,offset + 4).toString()
-    const length = buffer.slice(offset + 4, offset + 8).readUint32BE()
+const read_header_flags = (byte: number) => {
+    const bits = (byte >>> 0).toString(2)
+    const flags = ('00000000' + bits).slice(-8);
+    return {
+        unsynchronisation: flags[0] !== '0',
+        extended_header: flags[1] !== '0',
+        experimental_indicator: flags[2] !== '0',
+        footer_present: flags[3] !== '0'
+    }
+}
+
+export const read_id3_header = (buffer: Buffer) => {
+    console.log(buffer.subarray(0,10))
+    const type = buffer.subarray(0,3).toString()
+    if (type !== 'ID3') return {
+        type: undefined,
+        version: undefined,
+        major: undefined,
+        minor: undefined,
+        length: undefined
+    }
+
+    const major = buffer[3]
+    const minor = buffer[4]
+    const version = `2.${major}.${minor}`
+    const length = calculate_ID3_data_length_in_bytes(buffer.subarray(6,10))
+    const flags = read_header_flags(buffer[5])
+
+    return {type, version, major, minor, flags, length}
+}
+
+export const read_frame_header = (buffer: Buffer, offset: number)  => {
+    const field = buffer.subarray(offset,offset + 4).toString()
+    const length = buffer.subarray(offset + 4, offset + 8).readUint32BE()
     return {
         field: field,
         length: length
@@ -85,7 +115,7 @@ const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
     return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i]
 }
 
-export const readTagField = (buffer: Buffer, offset: number, length: number) => {
+export const read_tag_field = (buffer: Buffer, offset: number, length: number) => {
     const encodingType = buffer.readUInt8(offset)
     return encodingType === 1
         ? readUtf16(buffer, offset + 1, length - 1)[0]
