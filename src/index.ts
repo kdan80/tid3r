@@ -6,7 +6,7 @@ import { check_audio_format_is_supported,
     convert_buffer_to_hex_string,
     compare_hexstring_to_ID3v2,
     read_id3_header,
-    read_tag_field,
+    read_frame,
     read_frame_header,
 } from './read_file.js'
 
@@ -27,33 +27,23 @@ try {
     
     const id3_header = read_id3_header(audio_file_buffer)
     console.log(id3_header)
+    if (id3_header.major !== 3) throw new Error('Error: Only version 2.3 (and it\'s revisions) is supported')
     
+    let i = 10
+    let data = []
+    while (i < id3_header.length) {
+        const frame_header = read_frame_header(audio_file_buffer, i)
+        const frame_data = read_frame(audio_file_buffer, i + 10, frame_header.length)
+        const tag = {
+            field: frame_header.field,
+            data: frame_data
+        }
+        data.push(tag)
+        i = i + frame_header.length + 10
+    }
 
-    const tag_header = read_frame_header(audio_file_buffer, 10)
-    console.log(tag_header)
+    console.log(data)
 
 } catch (err: any) {
     console.log(err.message)
 }
-
-
-
-
-
-// // MN is bytes 0 to 2
-// const id3_magic_number = extract_ID3_magic_number(audio_file_buffer)
-// // console.log(id3_magic_number)
-
-// const id3_magic_number_hex = convert_buffer_to_hex_string(id3_magic_number)
-// // console.log(id3_magic_number_hex)
-
-// const audio_file_is_id3 = compare_hexstring_to_ID3v2(id3_magic_number_hex)
-// if (!audio_file_is_id3) throw new Error('Error: file is not ID3v2')
-// // console.log('file is ID3v2')
-
-// // The bytes that encode data length are bytes 6 to 9
-// const id3_length_bytes = extract_ID3_length_bytes(audio_file_buffer)
-// // console.log(id3_length_bytes)
-
-// const id3_length = calculate_ID3_data_length_in_bytes(id3_length_bytes)
-// console.log(id3_length)

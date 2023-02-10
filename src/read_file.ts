@@ -1,6 +1,10 @@
 import * as fsp from 'fs/promises'
 import path from 'path'
 
+// The ID3 Tag header is encoded in the first 10 bytes of an ID3 Mp3 file
+// $49 44 33 yy yy xx zz zz zz zz
+// Where; 49 44 33 = ID3, yy is less than $FF, xx is the ‘flags’ byte and zz is less than $80.
+
 // Magic numbers/file signatures for various file formats stored as hex strings
 const magic_number_ID3v2 = '494433'
 const magic_number_ID3v1 = 'fffb'
@@ -66,17 +70,17 @@ export const read_id3_header = (buffer: Buffer) => {
         type: undefined,
         version: undefined,
         major: undefined,
-        minor: undefined,
+        revision: undefined,
         length: undefined
     }
 
     const major = buffer[3]
-    const minor = buffer[4]
-    const version = `2.${major}.${minor}`
+    const revision = buffer[4]
+    const version = `2.${major}.${revision}`
     const length = calculate_ID3_data_length_in_bytes(buffer.subarray(6,10))
     const flags = read_header_flags(buffer[5])
 
-    return {type, version, major, minor, flags, length}
+    return {type, version, major, revision, flags, length}
 }
 
 export const read_frame_header = (buffer: Buffer, offset: number)  => {
@@ -115,7 +119,7 @@ const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
     return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i]
 }
 
-export const read_tag_field = (buffer: Buffer, offset: number, length: number) => {
+export const read_frame = (buffer: Buffer, offset: number, length: number) => {
     const encodingType = buffer.readUInt8(offset)
     return encodingType === 1
         ? readUtf16(buffer, offset + 1, length - 1)[0]
