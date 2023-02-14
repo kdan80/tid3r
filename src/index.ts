@@ -15,6 +15,23 @@ const id3v1_file = '/home/kd/Projects/tid3r/media/id3v1.mp3'
 const flac_file = '/home/kd/Projects/tid3r/media/flac.flac'
 const test_file = '/home/kd/Projects/tid3r/media/test.txt'
 
+const FRAMES = new Map([
+    ['TIT2', 'Title'],
+    ['TIT3', 'Subtitle'],
+    ['TPE1', 'Artist'],
+    ['TLEN', 'Length'],
+    ['TPE2', 'Additional Artists'],
+    ['TPUB', 'Publisher'],
+    ['TRCK', 'Track Number'],
+    ['TPOS', 'Disc Number'],
+    ['TALB', 'Album'],
+    ['TIME', 'Time'],
+    ['TCON', 'Genre'],
+    ['TYER', 'Year'],
+    ['TORY', 'Original Release Year'],
+    ['TDAT', 'Date',]
+]) 
+
 try {
 
     const audio_file = id3v2_file
@@ -38,7 +55,9 @@ try {
             field: frame_header.field,
             data: frame_data
         }
-        data.push(tag)
+        if (FRAMES.has(frame_header.field)) {
+            data.push(tag)
+        }
         i = i + frame_header.length + 10
     }
 
