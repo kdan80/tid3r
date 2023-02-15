@@ -30,7 +30,7 @@ try {
 
     const audio_file = id3v2_file
     let data = config.data
-    let tags = data.tags
+    //let tags = data.tags
 
     const file_is_supported = check_audio_format_is_supported(audio_file)
     if (!file_is_supported) throw new Error('Error: File is not supported')
@@ -53,18 +53,13 @@ try {
 
         if (FRAMES.has(frame_header.field)) {
             const frame_data = read_frame(audio_file_buffer, i + 10, frame_header.length)
-            tags = {
-                ...tags,
+            data.tags = {
+                ...data.tags,
                 [`${frame_header.field}`]: frame_data,
             }
         }
         
         i = i + frame_header.length + 10
-    }
-
-    data = {
-        ...data,
-        "tags": tags
     }
 
     console.log('data: ', data)
