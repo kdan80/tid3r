@@ -4,35 +4,35 @@ declare global {
      */
     
     interface Tags {
-        "TPE1": string | undefined
-        "TPE2": string | undefined
-        "TIT2": string | undefined
-        "TIT3": string | undefined
-        "TALB": string | undefined
-        "TRCK": string | undefined
-        "TPOS": string | undefined
-        "TPUB": string | undefined
-        "TCON": string | undefined
-        "TDAT": string | undefined
-        "TYER": string | undefined
-        "TORY": string | undefined
-        "TLEN": string | undefined
+        "TPE1": string
+        "TPE2": string
+        "TIT2": string
+        "TALB": string
+        "TRCK": string
+        "TPOS": string
+        "TCON": string
+        "TYER": string 
+        "TLEN": string
+        "TORY": string
+        "TPUB": string
     }
 
     interface Data {
-        "type": string | undefined
-        "version": string | undefined
-        "major": number | undefined
-        "revision": number | undefined
-        "flags": {
-            "unsynchronisation": boolean,
-            "extended_header": boolean,
-            "experimental_indicator": boolean,
-            "footer_present": boolean
-        }
-        "length": number | undefined,
-        "tags": Tags
+        "track_title": string | undefined
+        "artists": string[] | undefined
+        "album_artist": string | undefined
+        "track_number": number | undefined
+        "total_tracks": number | undefined
+        "disc_number": number | undefined
+        "total_discs": number | undefined
+        "album_title": string | undefined
+        "genre": string[] | undefined
+        "publisher": string | undefined
+        "release_year": number | undefined
+        "original_release_year": number | undefined
+        "duration": number | undefined
     }
 }
 
 export {}
+

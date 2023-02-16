@@ -27,31 +27,6 @@ export const calculate_ID3_data_length_in_bytes = (ID3_length_bytes: Buffer) => 
             |   (ID3_length_bytes.readUInt8(3))
 }
 
-export const extract_bytes_from_buffer = (offset: number, range: number) => {
-
-    return (audio_file_buffer: Buffer): Buffer => {
-        return audio_file_buffer.slice(offset, offset + range)
-    }
-}
-
-export const extract_ID3_magic_number = extract_bytes_from_buffer(0,3)
-export const extract_ID3_length_bytes = extract_bytes_from_buffer(6,4)
-
-export const convert_buffer_to_hex_string = (buffer: Buffer): string => {
-    return buffer.toString('hex')
-}
-
-export const compare_hexstring_to_magic_number = (magic_number: string) => {
-    return (hexstring: string): boolean => {
-        return hexstring.toLowerCase() === magic_number
-    }
-}
-
-// The following functions are used to validate whether a hexstring is a magic number
-export const compare_hexstring_to_ID3v2 = compare_hexstring_to_magic_number(magic_number_ID3v2)
-export const compare_hexstring_to_ID3v1 = compare_hexstring_to_magic_number(magic_number_ID3v1)
-export const compare_hexstring_to_flac = compare_hexstring_to_magic_number(magic_number_flac)
-
 const read_header_flags = (byte: number) => {
     const bits = (byte >>> 0).toString(2)
     const flags = ('00000000' + bits).slice(-8);
@@ -119,7 +94,7 @@ const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
     return [new TextDecoder(encoding).decode(Uint8Array.from(bytes.slice(2))), i]
 }
 
-export const read_frame = (buffer: Buffer, offset: number, length: number) => {
+export const read_frame_data = (buffer: Buffer, offset: number, length: number) => {
     const encodingType = buffer.readUInt8(offset)
     return encodingType === 1
         ? readUtf16(buffer, offset + 1, length - 1)[0]
