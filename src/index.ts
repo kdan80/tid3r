@@ -29,7 +29,7 @@ const ERROR_TEST = [
     'ZZZZ',
 ]
 
-FRAMES = FRAMES.concat(ERROR_TEST)
+//FRAMES = FRAMES.concat(ERROR_TEST)
 
 try {
 
@@ -81,8 +81,6 @@ try {
     // Add the unfound frames in [FRAMES] to [missing_frames]
     missing_frames = missing_frames.concat(FRAMES)
     if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, audio_file)
-
-    console.log('tags: ', tags)
 
     const data: Data = {
         "track_title": tags.TIT2,
