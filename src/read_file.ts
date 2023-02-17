@@ -39,7 +39,6 @@ const read_header_flags = (byte: number) => {
 }
 
 export const read_id3_header = (buffer: Buffer) => {
-    console.log(buffer.subarray(0,10))
     const type = buffer.subarray(0,3).toString()
     if (type !== 'ID3') return {
         type: undefined,
@@ -74,7 +73,7 @@ export const readIso8859 = (buffer: Buffer, offset: number, length = Infinity) =
         bytes.push(buffer.readUInt8(offset + i))
         i += 1
     }
-    return [new TextDecoder("iso-8859-1").decode(Uint8Array.from(bytes)), i];
+    return [new TextDecoder("iso-8859-1").decode(Uint8Array.from(bytes)), i]
 }
 
 const readUtf16 = (buffer: Buffer, offset: number, length = Infinity) => {
@@ -100,10 +99,3 @@ export const read_frame_data = (buffer: Buffer, offset: number, length: number) 
         ? readUtf16(buffer, offset + 1, length - 1)[0]
         : readIso8859(buffer, offset + 1, length - 1)[0]
 }
-
-
-
-
-
-
-

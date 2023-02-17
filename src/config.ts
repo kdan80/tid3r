@@ -16,7 +16,21 @@ export const data: Data = {
   "duration": undefined,
 }
 
-export const tags: Tags = {
+export const frames = [
+  "TPE1", // Artist
+  "TPE2", // Album Artist
+  "TIT2", // Track Title
+  "TALB", // Album Title
+  "TRCK", // Track Number eg 1/12
+  "TPOS", // Disc Number eg 1/2
+  "TCON", // Genre
+  "TYER", // Release year
+  "TORY", // Original releas year
+  "TLEN", // Length
+  "TPUB", // Publisher
+]
+
+const tags: Tags = {
   "TPE1": "",
   "TPE2": "",
   "TIT2": "",
@@ -28,4 +42,9 @@ export const tags: Tags = {
   "TORY": "",
   "TLEN": "",
   "TPUB": ""
+}
+
+export const mp3 = {
+  tags: tags,
+  frames: frames,
 }

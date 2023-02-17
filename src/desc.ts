@@ -156,3 +156,73 @@ const FRAME_DESCRIPTIONS = {
     "WPUB" : "Publishers official webpage",
     "WXXX" : "User defined URL link frame"
 }
+
+
+const frames = [
+    {
+        frame: "TPE1",
+        data: "Artists",
+        spec_description: "Lead performer(s)/Soloist(s)",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TPE2",
+        data: "Album Artist",
+        spec_description: "Band/orchestra/accompaniment",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TIT2",
+        data: "Track Title",
+        spec_description: "Title/songname/content spec_description",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TALB",
+        data: "Album Title",
+        spec_description: "Album/Movie/Show title",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TRCK",
+        data: "Track Number",
+        spec_description: "Track number/Position in set",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TPOS",
+        data: "Disc Number",
+        spec_description: "Part of a set",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TCON",
+        data: "Genre",
+        spec_description: "Content type",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TYER",
+        data: "Release Year",
+        spec_description: "Year",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TORY",
+        data: "Original Release Year",
+        spec_description: "Original release year",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TLEN",
+        data: "Track Duration",
+        spec_description: "Length",
+        validator: validate_TPE1
+    },
+    {
+        frame: "TPUB",
+        data: "Publisher",
+        spec_description: "Publisher",
+        validator: validate_TPE1
+    },
+]

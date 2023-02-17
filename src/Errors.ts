@@ -8,7 +8,7 @@ class MissingFramesError extends Error {
         file: typeof MissingFramesError.prototype._file) {
         super()
         this._frames = frames
-        this._name = 'MissingFrames'
+        this._name = 'MissingFramesError'
         this._file = file
     }
   
@@ -23,4 +23,26 @@ class MissingFramesError extends Error {
     }
 }
 
-export default MissingFramesError
+class FrameFormattingError extends Error {
+    _frame: string
+    _name: string
+    _file: string
+
+    constructor(
+        frame: typeof FrameFormattingError.prototype._frame,
+        file: typeof FrameFormattingError.prototype._file) {
+        super()
+        this._name = 'FrameFormattingError'
+        this._file = file
+        this._frame = frame
+    }
+
+    log_frame_error() {
+        console.error('\x1b[31m',`FrameFormattingError: ${this._frame} is improperly formatted`)
+    }
+}
+
+export {
+    MissingFramesError,
+    FrameFormattingError
+}

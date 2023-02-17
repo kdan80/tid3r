@@ -4,83 +4,68 @@ import { check_audio_format_is_supported,
     read_frame_data,
     read_frame_header,
 } from './read_file.js'
-import MissingFramesError from './Errors.js'
+import {MissingFramesError, FrameFormattingError} from './Errors.js'
+import Frame from './Frame.js'
 import * as config from './config.js'
 
 const id3v2_file = '/home/kd/Projects/tid3r/media/id3v2.mp3'
 
-let FRAMES = [
-    "TPE1", // Artist
-    "TPE2", // Album Artist
-    "TIT2", // Track Title
-    "TALB", // Album Title
-    "TRCK", // Track Number eg 1/12
-    "TPOS", // Disc Number eg 1/2
-    "TCON", // Genre
-    "TYER", // Release year
-    "TORY", // Original releas year
-    "TLEN", // Length
-    "TPUB", // Publisher
-]
-
-const ERROR_TEST = [
-    'XXXX',
-    'YYYY',
-    'ZZZZ',
-]
-
-//FRAMES = FRAMES.concat(ERROR_TEST)
-
 try {
 
-    const audio_file = id3v2_file
-    let tags = config.tags
+    const mp3_file = id3v2_file
+    const frames = config.mp3.frames
+    let tags = config.mp3.tags
     
     // This is array will be used to generate errors for missing metadata
     let missing_frames = []
 
-    const file_is_supported = check_audio_format_is_supported(audio_file)
+    const file_is_supported = check_audio_format_is_supported(mp3_file)
     if (!file_is_supported) throw new Error('Error: File is not supported')
     
-    const audio_file_buffer = await read_audio_file_to_buffer(audio_file)
-    // console.log(audio_file_buffer)
+    const mp3_file_buffer = await read_audio_file_to_buffer(mp3_file)
     
-    const id3_header = read_id3_header(audio_file_buffer)
-    // console.log(id3_header)
+    
+    const id3_header = read_id3_header(mp3_file_buffer)
     if (id3_header.type !== 'ID3') throw new Error('Error: No ID3 magic number found')
     if (id3_header.major !== 3) throw new Error('Error: Only version 2.3 is supported')
     
     let i = 10
     
     while (i < id3_header.length) {
-        const frame_header = read_frame_header(audio_file_buffer, i)
+        const frame_header = read_frame_header(mp3_file_buffer, i)
 
-        if (FRAMES.includes(frame_header.field)) {
-            const frame_data = read_frame_data(audio_file_buffer, i + 10, frame_header.length)
+        if (frames.includes(frame_header.field)) {
+            const frame_data = read_frame_data(mp3_file_buffer, i + 10, frame_header.length).toString()
             
             // If data is an empty string add it to missing frames array
             if (!frame_data) missing_frames.push(frame_header.field)
 
-            //console.log(frame_header.field, frame_data, typeof(frame_data))
+            const frame = new Frame(frame_header.field, frame_data, mp3_file)
+
+            const frame_is_valid = frame.validate()
+            if (!frame_is_valid) {
+
+            }
+            //console.log('data: ',frame_data,'is valid: ', frame_is_valid)
 
             tags = {
                 ...tags,
                 [`${frame_header.field}`]: frame_data
             }
 
-            // If we were able to generate metadata from the frame we can remove it from [FRAMES]
-            // Any frames that are not found will be left in the [FRAMES] and added to [missing_frames] later
-            const index = FRAMES.indexOf(frame_header.field)
-            FRAMES.splice(index, 1)
+            // If we were able to generate metadata from the frame we can remove it from [frames]
+            // Any frames that are not found will be left in the [frames] and added to [missing_frames] later
+            const index = frames.indexOf(frame_header.field)
+            frames.splice(index, 1)
         }
         
         // Move to the next frame
         i = i + frame_header.length + 10
     }
 
-    // Add the unfound frames in [FRAMES] to [missing_frames]
-    missing_frames = missing_frames.concat(FRAMES)
-    if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, audio_file)
+    // Add the unfound frames in [frames] to [missing_frames]
+    missing_frames = missing_frames.concat(frames)
+    if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, mp3_file)
 
     const data: Data = {
         "track_title": tags.TIT2,
@@ -99,12 +84,15 @@ try {
     }
 
     console.log('data: ', data)
-    
 
 } catch (err: any) {
     console.log(err)
     
-    if (err._name === 'MissingFrames') {
+    if (err._name === 'MissingFramesError') {
         err.log_missing_frames()
+    }
+
+    if (err._name === 'FrameFormattingError') {
+        err.log_frame_error()
     }
 }
