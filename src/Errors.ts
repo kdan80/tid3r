@@ -24,21 +24,52 @@ class MissingFramesError extends Error {
 }
 
 class FrameFormattingError extends Error {
-    _frame: string
-    _name: string
-    _file: string
+    frame: string
+    name: string
+    file: string
+    message: string
+    correct_format: string
 
     constructor(
-        frame: typeof FrameFormattingError.prototype._frame,
-        file: typeof FrameFormattingError.prototype._file) {
+        frame: typeof FrameFormattingError.prototype.frame,
+        file: typeof FrameFormattingError.prototype.file) {
         super()
-        this._name = 'FrameFormattingError'
-        this._file = file
-        this._frame = frame
+        this.name = 'FrameFormattingError'
+        this.file = file
+        this.frame = frame
+        this.message = `${this.frame}: was improperly formatted. ${this.file} will be skipped.`
+        this.correct_format = this.#compose_message()
     }
 
     log_frame_error() {
-        console.error('\x1b[31m',`FrameFormattingError: ${this._frame} is improperly formatted`)
+        console.error('\x1b[31m',`FrameFormattingError: ${this.frame} is improperly formatted`)
+    }
+
+    #compose_message() {
+        switch (this.frame) {
+            case 'TPE1':
+                return `Artist(s) name. Multiple artists should be separated with a semi-colon only (no whitespace).`
+            case 'TPE2':
+                return `Album artist name. Can be different from the track artist e.g. Various Artists for a compilation album.`
+            case 'TIT2':
+                return `Track title or name.`
+            case 'TALB':
+                return `Album title or name.`
+            case 'TCON':
+                return `Genre or content type. Multiple genres should be separated by a forward slash only (no whitespace).`
+            case 'TPUB':
+                return `Publisher. Record label etc.`
+            case 'TYER':
+                return `Year the track/album was released. May be different from TORY (original release year) if part of a remaster/re-release.`
+            case 'TORY':
+                return 'Original release year of the track/album.'
+            case 'TRCK':
+                return 'Track number. Should be formatted as current/total e.g. 1/12 for the first track, 2/12 for the second etc.'
+            case 'TPOS':
+                return 'Disc number. Should be formatted as current/total e.g. 1/2 for disc one, 2/2 for disc two etc.'
+            default:
+                return 'Unable to determine formatting error.'
+        }
     }
 }
 

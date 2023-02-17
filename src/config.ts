@@ -13,7 +13,7 @@ export const data: Data = {
   "publisher": undefined,
   "release_year": undefined,
   "original_release_year": undefined,
-  "duration": undefined,
+  //"duration": undefined,
 }
 
 export const frames = [
@@ -26,7 +26,7 @@ export const frames = [
   "TCON", // Genre
   "TYER", // Release year
   "TORY", // Original releas year
-  "TLEN", // Length
+  //"TLEN", // Length
   "TPUB", // Publisher
 ]
 

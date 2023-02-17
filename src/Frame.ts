@@ -30,12 +30,12 @@ class Frame {
             case 'TRCK':
             case 'TPOS':
                 return validators.is_valid_set(this._frame_data)
-            case 'TLEN':
-                return validators.is_valid_length(this._frame_data)
             default:
                 return false
         }
     }
+
+
 }
 
 export default Frame

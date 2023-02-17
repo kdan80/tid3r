@@ -30,7 +30,7 @@ declare global {
         "publisher": string | undefined
         "release_year": number | undefined
         "original_release_year": number | undefined
-        "duration": number | undefined
+        //"duration": number | undefined
     }
 }
 

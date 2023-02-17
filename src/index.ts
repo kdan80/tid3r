@@ -15,6 +15,7 @@ try {
     const mp3_file = id3v2_file
     const frames = config.mp3.frames
     let tags = config.mp3.tags
+    let errors = []
     
     // This is array will be used to generate errors for missing metadata
     let missing_frames = []
@@ -44,7 +45,8 @@ try {
 
             const frame_is_valid = frame.validate()
             if (!frame_is_valid) {
-
+                const err = new FrameFormattingError(frame_header.field, mp3_file)
+                errors.push(err)
             }
             //console.log('data: ',frame_data,'is valid: ', frame_is_valid)
 
@@ -63,6 +65,8 @@ try {
         i = i + frame_header.length + 10
     }
 
+    if (errors.length > 0) throw errors
+
     // Add the unfound frames in [frames] to [missing_frames]
     missing_frames = missing_frames.concat(frames)
     if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, mp3_file)
@@ -80,7 +84,7 @@ try {
         "publisher": tags.TPUB,
         "release_year": parseInt(tags.TYER),
         "original_release_year": parseInt(tags.TORY),
-        "duration": parseInt(tags.TLEN)
+        //"duration": parseInt(tags.TLEN)
     }
 
     console.log('data: ', data)
