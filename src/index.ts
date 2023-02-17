@@ -4,11 +4,12 @@ import { check_audio_format_is_supported,
     read_frame_data,
     read_frame_header,
 } from './read_file.js'
+import MissingFramesError from './Errors.js'
 import * as config from './config.js'
 
 const id3v2_file = '/home/kd/Projects/tid3r/media/id3v2.mp3'
 
-const FRAMES = [
+let FRAMES = [
     "TPE1", // Artist
     "TPE2", // Album Artist
     "TIT2", // Track Title
@@ -20,8 +21,15 @@ const FRAMES = [
     "TORY", // Original releas year
     "TLEN", // Length
     "TPUB", // Publisher
-    //"TEST" // For Error Testing
 ]
+
+const ERROR_TEST = [
+    'XXXX',
+    'YYYY',
+    'ZZZZ',
+]
+
+FRAMES = FRAMES.concat(ERROR_TEST)
 
 try {
 
@@ -72,8 +80,7 @@ try {
 
     // Add the unfound frames in [FRAMES] to [missing_frames]
     missing_frames = missing_frames.concat(FRAMES)
-    console.log('missing frames', missing_frames)
-    if (missing_frames.length !== 0) throw new Error('Error: missing data')
+    if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, audio_file)
 
     console.log('tags: ', tags)
 
@@ -97,5 +104,9 @@ try {
     
 
 } catch (err: any) {
-    console.log(err.message)
+    console.log(err)
+    
+    if (err._name === 'MissingFrames') {
+        err.log_missing_frames()
+    }
 }
