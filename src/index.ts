@@ -15,7 +15,8 @@ try {
     const mp3_file = id3v2_file
     const frames = config.mp3.frames
     let tags = config.mp3.tags
-    let errors = []
+    let improperly_formatted_frames = []
+    let errors: any = []
     
     // This is array will be used to generate errors for missing metadata
     let missing_frames = []
@@ -45,8 +46,8 @@ try {
 
             const frame_is_valid = frame.validate()
             if (!frame_is_valid) {
-                const err = new FrameFormattingError(frame_header.field, mp3_file)
-                errors.push(err)
+                //const err = new FrameFormattingError(frame_header.field, mp3_file)
+                improperly_formatted_frames.push(frame)
             }
             //console.log('data: ',frame_data,'is valid: ', frame_is_valid)
 
@@ -65,7 +66,13 @@ try {
         i = i + frame_header.length + 10
     }
 
-    if (errors.length > 0) throw errors
+    if (improperly_formatted_frames.length > 0) {
+        improperly_formatted_frames.forEach(frame => {
+            const err = new FrameFormattingError(frame)
+            errors.push(err)
+        })
+        throw errors
+    }
 
     // Add the unfound frames in [frames] to [missing_frames]
     missing_frames = missing_frames.concat(frames)
