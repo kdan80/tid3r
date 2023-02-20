@@ -1,25 +1,25 @@
 import path from 'path'
 
-class MissingFramesError extends Error {
-    _frames: string[]
-    _name: string
-    _file: string
+class MissingFrameError extends Error {
+    frames: string[]
+    name: string
+    file: string
 
     constructor(
-        frames: typeof MissingFramesError.prototype._frames,
-        file: typeof MissingFramesError.prototype._file) {
+        frames: typeof MissingFrameError.prototype.frames,
+        file: typeof MissingFrameError.prototype.file) {
         super()
-        this._frames = frames
-        this._name = 'MissingFramesError'
-        this._file = path.basename(file)
+        this.frames = frames
+        this.name = 'MissingFrameError'
+        this.file = path.basename(file)
     }
   
     getMissingFrames() {
-        return this._frames;
+        return this.frames;
     }
 
     log_missing_frames() {
-        return this._frames.forEach(frame => {
+        return this.frames.forEach(frame => {
             console.error('\x1b[31m',`MissingFrame: ${frame} is required`)
         })
     }
@@ -51,6 +51,6 @@ class FrameFormattingError extends Error {
 }
 
 export {
-    MissingFramesError,
+    MissingFrameError,
     FrameFormattingError
 }

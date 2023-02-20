@@ -4,7 +4,7 @@ import { check_audio_format_is_supported,
     read_frame_data,
     read_frame_header,
 } from './read_file.js'
-import {MissingFramesError, FrameFormattingError} from './Errors.js'
+import {MissingFrameError, FrameFormattingError} from './Errors.js'
 import Frame from './Frame.js'
 import * as config from './config.js'
 
@@ -76,7 +76,7 @@ try {
 
     // Add the unfound frames in [frames] to [missing_frames]
     missing_frames = missing_frames.concat(frames)
-    if (missing_frames.length > 0) throw new MissingFramesError(missing_frames, mp3_file)
+    if (missing_frames.length > 0) throw new MissingFrameError(missing_frames, mp3_file)
 
     const data: Data = {
         "track_title": tags.TIT2,
@@ -99,7 +99,7 @@ try {
 } catch (err: any) {
     console.log(err)
     
-    if (err._name === 'MissingFramesError') {
+    if (err._name === 'MissingFrameError') {
         err.log_missing_frames()
     }
 
