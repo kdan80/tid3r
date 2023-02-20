@@ -71,12 +71,19 @@ try {
             const err = new FrameFormattingError(frame)
             errors.push(err)
         })
-        throw errors
     }
 
     // Add the unfound frames in [frames] to [missing_frames]
     missing_frames = missing_frames.concat(frames)
-    if (missing_frames.length > 0) throw new MissingFrameError(missing_frames, mp3_file)
+    if (missing_frames.length > 0) {
+        missing_frames.forEach(frame => {
+            const err = new MissingFrameError(frame, mp3_file)
+            errors.push(err)
+        })
+        
+    }
+
+    if (errors.length > 0) throw errors
 
     const data: Data = {
         "track_title": tags.TIT2,
