@@ -67,6 +67,10 @@ class Frame {
         }
     }
 
+    write() {
+
+    }
+
 
 }
 

@@ -3,7 +3,7 @@ import { check_audio_format_is_supported,
     read_id3_header,
     read_frame_data,
     read_frame_header,
-} from './read_file.js'
+} from './helpers.js'
 import {MissingFrameError, FrameFormattingError} from './Errors.js'
 import Frame from './Frame.js'
 import * as config from './config.js'
