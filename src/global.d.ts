@@ -32,6 +32,44 @@ declare global {
         "original_release_year": number | undefined
         //"duration": number | undefined
     }
+
+    type FrameFlags = {
+        message: {
+            tag_alter_preservation: boolean
+            file_alter_preservation: boolean
+            read_only: boolean
+        },
+        format: {
+            grouping_identity: boolean
+            compression: boolean
+            encryption: boolean
+            unsynchronisation: boolean
+            data_length_indicator: boolean
+        }
+    }
+
+    type HeaderFlags = {
+        unsynchronisation: boolean
+        extended_header: boolean
+        experimental_indicator: boolean
+        footer_present: boolean
+    }
+
+    type Frame = {
+        id: string
+        description?: string
+        data: Buffer
+        flags?: FrameFlags
+        length: number
+    }
+    
+    type ID3Header = {
+        version: string
+        major: number
+        revision: number
+        flags?: HeaderFlags
+        length: number
+    }
 }
 
 export {}

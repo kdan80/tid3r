@@ -27,6 +27,24 @@ export const calculate_ID3_data_length_in_bytes = (ID3_length_bytes: Buffer) => 
             |   (ID3_length_bytes.readUInt8(3))
 }
 
+export const get_synchsafe_integer_32 = (number: number): Buffer => {
+    // 0x7f = 0b01111111
+    return Buffer.from([
+        (number >> 21) & 0x7f,
+        (number >> 14) & 0x7f,
+        (number >> 7) & 0x7f,
+        number & 0x7f
+    ])
+}
+
+export const get_integer_24 = (number: number): Buffer => {
+    return Buffer.from([
+        (number >> 16) & 0xff,
+        (number >> 8) & 0xff,
+        number & 0xff
+    ])
+}
+
 const read_header_flags = (byte: number) => {
     const bits = (byte >>> 0).toString(2)
     const flags = ('00000000' + bits).slice(-8);
