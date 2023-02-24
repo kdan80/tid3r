@@ -52,7 +52,6 @@ declare global {
         unsynchronisation: boolean
         extended_header: boolean
         experimental_indicator: boolean
-        footer_present: boolean
     }
 
     type Frame = {

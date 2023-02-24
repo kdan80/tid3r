@@ -1,34 +1,7 @@
-import { check_audio_format_is_supported,
-    read_audio_file_to_buffer,
-    read_id3_header,
-    read_frame_data,
-    read_frame_header,
-} from './helpers.js'
-import {MissingFrameError, FrameFormattingError} from './Errors.js'
-import Frame from './Frame.js'
-import ID3Header from './ID3Header.js'
-import * as config from './config.js'
-
 const id3v2_file = '/home/kd/Projects/tid3r/media/id3v2.mp3'
 
 try {
 
-    const mp3_file = id3v2_file
-    const frames = config.mp3.frames
-    let tags = config.mp3.tags
-    let improperly_formatted_frames = []
-    let errors: any = []
-    
-    // This is array will be used to generate errors for missing metadata
-    let missing_frames = []
-
-    const file_is_supported = check_audio_format_is_supported(mp3_file)
-    if (!file_is_supported) throw new Error('Error: File is not supported')
-    
-    const mp3_file_buffer = await read_audio_file_to_buffer(mp3_file)
-
-    const id3_header = new ID3Header(mp3_file_buffer.subarray(0,10))
-    console.log(id3_header)
     
 
 } catch (err: any) {
