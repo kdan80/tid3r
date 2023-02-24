@@ -2,10 +2,11 @@ import read from "./api/read.js"
 
 const mp3_v2 = '/home/kd/Projects/tid3r/media/id3v2.mp3'
 const flac = '/home/kd/Projects/tid3r/media/flac.flac'
+const dummy = '/home/kd/Projects/tid3r/media/flac.ddd'
 
-read(mp3_v2)
+const data = await read(flac)
 
-
+console.log('data: ', data)
 
 
 
