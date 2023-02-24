@@ -10,6 +10,12 @@ const magic_number_ID3v2 = '494433'
 const magic_number_ID3v1 = 'fffb'
 const magic_number_flac = '664c6143'
 
+// Convert a number to 8 bit encoded byte
+const to_bin = (num: number) => {
+    return ("000000000" + num.toString(2)).substr(-8)
+}
+
+
 export const check_audio_format_is_supported = (audio_file_path: string): boolean => {
     const file_extension = path.extname(audio_file_path).toLowerCase()
     return ['.mp3', '.flac'].includes(file_extension)
@@ -40,14 +46,13 @@ export const get_integer_24 = (buffer: Buffer) => {
         |   (buffer[2])
     
   }
-const read_header_flags = (byte: number) => {
-    const bits = (byte >>> 0).toString(2)
-    const flags = ('00000000' + bits).slice(-8);
+
+export const read_header_flags = (byte: number) => {
     return {
-        unsynchronisation: flags[0] !== '0',
-        extended_header: flags[1] !== '0',
-        experimental_indicator: flags[2] !== '0',
-        footer_present: flags[3] !== '0'
+        unsynchronisation: Boolean(byte & (1 << 7)),
+        extended_header: Boolean(byte & (1 << 6)),
+        experimental_indicator: Boolean(byte & (1 << 5)),
+        footer_present: Boolean(byte & (1 << 4))
     }
 }
 
