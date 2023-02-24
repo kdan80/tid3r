@@ -1,19 +1,9 @@
-const id3v2_file = '/home/kd/Projects/tid3r/media/id3v2.mp3'
+import read from "./api/read.js"
 
-try {
+const mp3_v2 = '/home/kd/Projects/tid3r/media/id3v2.mp3'
+const flac = '/home/kd/Projects/tid3r/media/flac.flac'
 
-    
-
-} catch (err: any) {
-    console.log(err)
-    
-    
-}
-
-
-
-
-
+read(mp3_v2)
 
 
 
