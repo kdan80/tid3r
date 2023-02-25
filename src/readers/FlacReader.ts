@@ -2,12 +2,15 @@ import MediaFileReader from "./MediaFileReader.js"
 
 class FlacReader extends MediaFileReader {
 
-    // type: string
+    constructor(
+        file_path: string,
+    ) {
+        super(
+            file_path,
+        )
 
-    // constructor() {
-    //     super()
-    //     this.type = 'flac_reader'
-    // }
+        this.reader_type = 'flac_reader'
+    }
 }
 
 export default FlacReader
