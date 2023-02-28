@@ -8,7 +8,7 @@ const mp3_v1 = '/home/kd/Projects/tid3r/media/id3v1.mp3'
 const err_flac = '/home/kd/Projects/tid3r/media/err.flac'
 const err_mp3 = '/home/kd/Projects/tid3r/media/err.mp3'
 
-const data = await read(flac)
+const data = await read(mp3_v2)
 
 console.log('data: ', data)
 

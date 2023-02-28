@@ -13,16 +13,17 @@ const read = async(file_path: string) => {
         console.log('file_header: ', file_header)
         
         const file_stat = new FileStat(file_path, file_header)
+        console.log(file_stat)
         
         const tag_type = file_stat.tag_type
         if (!tag_type) throw new Error('No supported tag found.')
 
         const Reader = (tag_type === 'id3') ? ID3Reader : FlacReader
 
-        const reader = new Reader(file_path)
+        const reader = new Reader(file_path, file_header)
 
         const type = reader.type
-        console.log('type: ', type)
+        console.log('reader: ', reader)
 
     } catch(err) {
         console.log(err)
