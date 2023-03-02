@@ -69,6 +69,8 @@ declare global {
         flags?: HeaderFlags
         length: number
     }
+
+    type Result<Ok,Err> = { ok: true, data: Ok } | { ok: false, data: Err}
 }
 
 export {}
