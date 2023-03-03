@@ -71,6 +71,13 @@ declare global {
     }
 
     type Result<Ok,Err> = { ok: true, data: Ok } | { ok: false, data: Err}
+
+    declare interface Error {
+        name: string
+        message: string
+        stack?: string
+        code?: number | string
+    }
 }
 
 export {}

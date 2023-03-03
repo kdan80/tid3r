@@ -1,4 +1,5 @@
 import read_file_to_buffer from './utils/read_file_to_buffer.js'
+import match from './utils/match.js'
 
 const mp3_v2 = '/home/kd/Projects/tid3r/media/id3v2.mp3'
 const flac = '/home/kd/Projects/tid3r/media/flac.flac'
@@ -15,8 +16,6 @@ const main = async() => {
     const { ok, data } = await read_file_to_buffer(file)
     if (!ok) return console.log('err: ', data)
 
-
-    
     
 }
 
