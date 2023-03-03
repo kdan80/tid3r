@@ -13,11 +13,11 @@ const main = async() => {
 
     const file = mp3_v2
 
-    const { ok, data } = await read_file_to_buffer(file)
-    if (!ok) return console.log('read err: ', data)
+    const { ok: file_successfully_read, data: file_data } = await read_file_to_buffer(file)
+    if (!file_successfully_read) return console.log('read err: ', file_data)
 
-    const { ok: res, data: data_2 } = determine_tag_type(data)
-    if (!res) return console.log('parse err: ', data_2)
+    const { ok: tag_was_determined, data: data_2 } = determine_tag_type(file_data)
+    if (!tag_was_determined) return console.log('parse err: ', data_2)
     console.log('tag_type: ', data_2)
 
 }
