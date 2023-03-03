@@ -11,7 +11,7 @@ const read_file_to_buffer = async (file_path: string): Promise<Result<Buffer, st
         }
     } catch (err)  {
 
-        // Node errors are standard js Error type
+        // Node errors are of the standard js Error type
         if (err instanceof Error) {
             const code = err.code
             const file_name = path.basename(file_path)
@@ -28,10 +28,9 @@ const read_file_to_buffer = async (file_path: string): Promise<Result<Buffer, st
             }
         }
         
-        console.log(err)
         return {
             ok: false,
-            data: `Unable to read file: ${path.basename(file_path) ? 'file' : 'No '}`
+            data: `Unable to read file.`
         }
     }
 }
