@@ -9,13 +9,10 @@ export const f = (x: boolean): IOEither<string,string> => {
     return x ? IO.right('pass') : IO.left('fail')
 }
 
-const read_file_to_buffer = async (file_path: string): Promise<Result<Buffer, string>> => {
+const read_file_to_buffer = async (file_path: string): Promise<IOEither<string, Buffer>> => {
     try {
         const audio_file_buffer = await fsp.readFile(file_path)
-        return {
-            ok: true,
-            data: audio_file_buffer
-        }
+        return IO.right(audio_file_buffer)
     } catch (err)  {
 
         // Node errors are of the standard js Error type
@@ -29,16 +26,10 @@ const read_file_to_buffer = async (file_path: string): Promise<Result<Buffer, st
                 .on((code) => code === 'EISDIR', () => { return 'File is a directory.' })
                 .otherwise(x => { return 'There was an error trying to read the file.' })
 
-            return {
-                ok: false,
-                data: error_message
-            }
+            return IO.left(error_message)
         }
         
-        return {
-            ok: false,
-            data: `Unable to read file.`
-        }
+        return IO.left('Unable to read file.')
     }
 }
 

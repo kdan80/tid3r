@@ -1,12 +1,21 @@
-import { f } from './utils/read_file_to_buffer.js'
+import read_file_to_buffer from './utils/read_file_to_buffer.js'
+import determine_tag_type from './utils/determine_tag_type.js'
+
+const mp3_v2 = '/home/kd/Projects/tid3r/media/id3v2.mp3'
+const flac = '/home/kd/Projects/tid3r/media/flac.flac'
+
+const mp3_v1 = '/home/kd/Projects/tid3r/media/id3v1.mp3'
+
+const err_flac = '/home/kd/Projects/tid3r/media/err.flac'
+const err_mp3 = '/home/kd/Projects/tid3r/media/err.mp3'
 
 const main = async() => {
 
-    const y = f(true)
+    const file = mp3_v2
+    const a = await read_file_to_buffer(file)
 
-    const z = y()
-
-    console.log('z: ', z)
+    const b = a()
+    console.log('b: ', b)
 
 }
 
